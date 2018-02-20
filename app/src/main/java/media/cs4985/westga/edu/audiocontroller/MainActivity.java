@@ -108,9 +108,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            View rootView = inflater.inflate(R.layout.fragment_files, container, false);
+            TextView textView = (TextView) rootView.findViewById(R.id.playListView);
+            textView.setText(getString(getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
     }
@@ -127,9 +127,19 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+           Fragment fragment = null;
+
+           switch (position){
+               case 0:
+                   fragment = new FileFragment();
+                   break;
+               case 1:
+                   fragment = new PlaylistFragment();
+                   break;
+               case 2:
+                   fragment = new OptionsFragment();
+           }
+           return fragment;
         }
 
         @Override
