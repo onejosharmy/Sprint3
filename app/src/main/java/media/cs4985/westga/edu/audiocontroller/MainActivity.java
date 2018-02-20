@@ -17,6 +17,9 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import java.io.File;
+import java.util.ArrayList;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
         //mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-
+        FilePuller thePuller = new FilePuller();
+        ArrayList<File> musicFiles = thePuller.getAllMusic();
     }
 
 
