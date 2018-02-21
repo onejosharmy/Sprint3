@@ -74,6 +74,45 @@ public class MusicManager {
         }
     }
 
+    public void nextSong() {
+        if (this.currentIndex == this.musicFiles.size()) {
+            System.out.println("NO MORE SONGS");
+        } else {
+            this.currentIndex++;
+            File songToPlay = this.musicFiles.get(currentIndex);
 
+            try {
+                this.djJazzyJeff.stop();
+                this.djJazzyJeff.reset();
+                this.djJazzyJeff.setDataSource(songToPlay.getAbsolutePath());
+                this.djJazzyJeff.prepare();
+                this.djJazzyJeff.start();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+    public void prevSong() {
+        if (this.currentIndex == 0) {
+            System.out.println("NO PREV SONG");
+        } else {
+            this.currentIndex--;
+            File songToPlay = this.musicFiles.get(currentIndex);
+
+            try {
+                this.djJazzyJeff.stop();
+                this.djJazzyJeff.reset();
+                this.djJazzyJeff.setDataSource(songToPlay.getAbsolutePath());
+                this.djJazzyJeff.prepare();
+                this.djJazzyJeff.start();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 
 }

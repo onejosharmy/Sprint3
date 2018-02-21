@@ -108,11 +108,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void pausePlay(View view) {
         this.theManager.playSong();
+        this.updateSongPlayingText();
+    }
+
+    private void updateSongPlayingText() {
         TextView songName = findViewById(R.id.songName);
         String trimmedName = this.theManager.getCurrentSong().getPath().substring(this.theManager.getCurrentSong().getPath().lastIndexOf("/")+1);
         songName.setText(trimmedName);
     }
 
+    public void skipToPreviousSong(View view){
+        this.theManager.prevSong();
+        this.updateSongPlayingText();
+    }
+
+    public void skipToNextSong(View view){
+        this.theManager.nextSong();
+        this.updateSongPlayingText();
+    }
     /**
      * A placeholder fragment containing a simple view.
      */
