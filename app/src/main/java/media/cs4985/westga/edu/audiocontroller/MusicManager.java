@@ -32,9 +32,11 @@ public class MusicManager {
                 if(MusicManager.this.currentIndex>=MusicManager.this.musicFiles.size()){
                     System.out.println("NO MORE SONGS");
 
-                }
+                } else {
                 MusicManager.this.currentIndex++;
                 try {
+                    mp.stop();
+                    mp.reset();
                     mp.setDataSource(MusicManager.this.musicFiles.get(MusicManager.this.currentIndex).getAbsolutePath());
                     mp.prepare();
                     mp.start();
@@ -42,9 +44,13 @@ public class MusicManager {
                     System.out.println("DATA SOURCE NOT SET");
                     System.out.println(e.getStackTrace());
                 }
-            }
+            }}
         });
 
+    }
+
+    public File getCurrentSong(){
+        return this.musicFiles.get(currentIndex);
     }
 
     public void playSong() {
@@ -61,6 +67,7 @@ public class MusicManager {
                     this.djJazzyJeff.setDataSource(songToPlay.getAbsolutePath());
                     this.djJazzyJeff.prepare();
                     this.djJazzyJeff.start();
+
                 } catch (IOException e) {
                     e.printStackTrace();
             }

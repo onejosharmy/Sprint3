@@ -69,8 +69,27 @@
     <LinearLayout android:id="@+id/ribbon_linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         xmlns:android="http://schemas.android.com/apk/res/android">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <TextView
+            android:id="@+id/songName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Name" />
+            <TextView
+                android:id="@+id/songTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Time" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
         <Button
             android:id="@+id/prevSong_btn"
             android:layout_width="wrap_content"
@@ -90,28 +109,15 @@
             android:layout_height="wrap_content"
             android:text="Next Song"
             android:onClick="skipToNextSong"/>
+        </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-        <TextView
-            android:id="@+id/songTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
-            <TextView
-                android:id="@+id/songName"
+            android:layout_height="wrap_content">
+            <SeekBar
+                android:id="@+id/seekBar2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <SeekBar
-            android:id="@+id/seekBar2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+
 </LinearLayout>

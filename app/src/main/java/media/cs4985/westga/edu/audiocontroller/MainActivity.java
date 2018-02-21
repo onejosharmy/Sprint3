@@ -21,6 +21,8 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -106,6 +108,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void pausePlay(View view) {
         this.theManager.playSong();
+        TextView songName = findViewById(R.id.songName);
+        String trimmedName = this.theManager.getCurrentSong().getPath().substring(this.theManager.getCurrentSong().getPath().lastIndexOf("/")+1);
+        songName.setText(trimmedName);
     }
 
     /**

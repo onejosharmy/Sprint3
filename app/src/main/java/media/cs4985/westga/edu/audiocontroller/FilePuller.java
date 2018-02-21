@@ -52,6 +52,7 @@ public class FilePuller {
 
     private void getAllFiles(File currentDirectory, String searchPattern) {
         File[] fileList = currentDirectory.listFiles();
+        File smallest;
         if(fileList == null){
             System.out.println("null list o files");
         } else {
