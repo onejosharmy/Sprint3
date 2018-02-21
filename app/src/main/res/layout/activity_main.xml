@@ -72,16 +72,24 @@
         android:orientation="horizontal"
         xmlns:android="http://schemas.android.com/apk/res/android">
         <Button
-            android:id="@+id/button5"
+            android:id="@+id/prevSong_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="Last Song"
+            android:onClick="skipToPreviousSong"/>
+        <Button
+            android:id="@+id/playpause_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pause/Play"
+            android:onClick="pausePlay"/>
 
         <Button
-            android:id="@+id/button6"
+            android:id="@+id/nextSong_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="Next Song"
+            android:onClick="skipToNextSong"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

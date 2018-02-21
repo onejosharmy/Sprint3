@@ -1,6 +1,10 @@
 package media.cs4985.westga.edu.audiocontroller;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private MusicManager theManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +63,19 @@ public class MainActivity extends AppCompatActivity {
         //mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
         FilePuller thePuller = new FilePuller();
-        ArrayList<File> musicFiles = thePuller.getAllMusic();
+        permissionChecker(Manifest.permission.READ_EXTERNAL_STORAGE);
+        this.theManager = new MusicManager(thePuller.getAllMusic(),this);
     }
 
+
+    private void permissionChecker(String permission) {
+        int permissionGranted = ContextCompat.checkSelfPermission(this, permission);
+
+        if (permissionGranted == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this, new String[]{permission}, 0);
+        }
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -82,6 +97,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void doTheSearch(View view) {
+        FilePuller thePuller = new FilePuller();
+        this.theManager = new MusicManager(thePuller.getAllMusic(),this);
+    }
+
+    public void pausePlay(View view) {
+        this.theManager.playSong();
     }
 
     /**

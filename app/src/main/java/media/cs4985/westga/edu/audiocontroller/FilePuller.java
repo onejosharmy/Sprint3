@@ -43,6 +43,7 @@ public class FilePuller {
     }
 
     public ArrayList<File> getAllMusic(){
+        System.out.println(Environment.getExternalStorageDirectory());
         this.getAllFiles(Environment.getExternalStorageDirectory(), "mp3");
         this.getAllFiles(Environment.getExternalStorageDirectory(), "ogg");
         this.getAllFiles(Environment.getExternalStorageDirectory(), "flac");
@@ -53,18 +54,17 @@ public class FilePuller {
         File[] fileList = currentDirectory.listFiles();
         if(fileList == null){
             System.out.println("null list o files");
-            return;
-        }
-        for (File current : fileList) {
-            if (current.isDirectory()) {
-                getAllFiles(current, searchPattern);
+        } else {
+            for (File current : fileList) {
+                if (current.isDirectory()) {
+                    getAllFiles(current, searchPattern);
+                }
+                String path = current.getAbsolutePath().toLowerCase();
+                if (current.isFile() && (path.contains(searchPattern.toLowerCase()))) {
+                    System.out.println(current.getPath());
+                    this.allMusic.add(current);
+                }
             }
-            String path = current.getAbsolutePath().toLowerCase();
-            if (current.isFile() && (path.contains(searchPattern.toLowerCase()))) {
-                System.out.println(current.getPath());
-                this.allMusic.add(current);
-            }
-        }
-    }
+    }}
 }
 
