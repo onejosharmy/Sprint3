@@ -53,6 +53,10 @@ public class MusicManager {
         return this.musicFiles.get(currentIndex);
     }
 
+    public ArrayList<File> getMusicFiles() {
+        return musicFiles;
+    }
+
     public void playSong() {
         if (this.djJazzyJeff.isPlaying()) {
             this.djJazzyJeff.pause();

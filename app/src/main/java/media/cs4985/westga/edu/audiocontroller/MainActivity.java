@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -44,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private MusicManager theManager;
+    private EntryAdapter theAdapter;
+    private ListView theListView;
+    private ArrayList<Entry> theList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +72,14 @@ public class MainActivity extends AppCompatActivity {
         FilePuller thePuller = new FilePuller();
         permissionChecker(Manifest.permission.READ_EXTERNAL_STORAGE);
         this.theManager = new MusicManager(thePuller.getAllMusic(),this);
+        this.theList = new ArrayList<Entry>();
+
+        for(File current:this.theManager.getMusicFiles()){
+            int trimIndex = current.getPath().lastIndexOf("/") + 1;
+            Entry theEntry = new Entry(current.getPath().substring(trimIndex));
+            theList.add(theEntry);
+        }
+
     }
 
 
@@ -79,11 +92,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public ArrayList<Entry> getTheList() {
+        return theList;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    public ListView getTheListView() {
+        return theListView;
     }
 
     @Override
@@ -143,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
+        public PlaceholderFragment newInstance(int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
@@ -154,9 +175,16 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_files, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.playListView);
-            textView.setText(getString(getArguments().getInt(ARG_SECTION_NUMBER)));
+
+            View rootView = inflater.inflate(R.layout.fragment_playlist, container, false);
+
+            ListView theListView = (ListView) rootView.findViewById(R.id.listViewPlay);
+            ArrayList<Entry> theList = new MainActivity().getTheList();
+            System.out.println(theList.size());
+            EntryAdapter theAdapter = new EntryAdapter(rootView.getContext(), R.layout.entry_view, theList);
+            theListView.setAdapter(theAdapter);
+            //TextView textView = (TextView) rootView.findViewById(R.id.playListView);
+            //textView.setText(getString(getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
     }
