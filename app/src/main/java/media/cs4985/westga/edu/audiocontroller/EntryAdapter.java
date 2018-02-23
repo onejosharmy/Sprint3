@@ -41,7 +41,6 @@ public class EntryAdapter extends ArrayAdapter<Entry> {
         TextView text = entryView.findViewById(R.id.textviewname);
         text.setText(entry.getName());
 
-
         return entryView;
     }
 

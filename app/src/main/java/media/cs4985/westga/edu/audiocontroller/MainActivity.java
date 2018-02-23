@@ -2,32 +2,22 @@ package media.cs4985.westga.edu.audiocontroller;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.app.ListActivity;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 
 public class MainActivity extends ListActivity {
@@ -41,7 +31,10 @@ public class MainActivity extends ListActivity {
     private MusicManager theManager;
     private EntryAdapter theAdapter;
     private ListView theListView;
-    private ArrayList<Entry> theList;
+    private boolean isEditing;
+    private ArrayList<Entry> theCurrentList;
+    private ArrayList<Entry> thePlaylistNameList;
+    private ArrayList<ArrayList<Entry>> arraylistPlaylistList;
 
 
     @Override
@@ -53,24 +46,47 @@ public class MainActivity extends ListActivity {
         //mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         FilePuller thePuller = new FilePuller();
         permissionChecker(Manifest.permission.READ_EXTERNAL_STORAGE);
-        this.theManager = new MusicManager(thePuller.getAllMusic(), this);
+        this.theManager = new MusicManager(this);
         this.theListView = (ListView) findViewById(R.id.list);
-        generate();
+        this.thePlaylistNameList = new ArrayList<>();
+        this.arraylistPlaylistList = new ArrayList<>();
+        this.isEditing=false;
+        generate(new Entry("dummy",0,false));
     }
 
-    private void generate(){
-
-        this.theList = new ArrayList<Entry>();
-
-        for (File current : this.theManager.getMusicFiles()) {
+    private ArrayList<Entry> FilesToEntriesArraylist(ArrayList<File> files){
+        ArrayList<Entry> theEntriesPlease = new ArrayList<>();
+        for(File current:files){
             int trimIndex = current.getPath().lastIndexOf("/") + 1;
-            Entry theEntry = new Entry(current.getPath().substring(trimIndex));
-            theList.add(theEntry);
+            Entry theEntry = new Entry(current.getPath().substring(trimIndex),current,false);
+            theEntriesPlease.add(theEntry);
             System.out.println(theEntry);
         }
+        return theEntriesPlease;
+    }
 
 
-        this.theAdapter = new EntryAdapter(MainActivity.this, R.layout.entry_view, this.theList);
+    private void generate(Entry selected){
+
+        this.theCurrentList = new ArrayList<Entry>();
+        if(this.thePlaylistNameList.size()==0){
+            FilePuller thePuller = new FilePuller();
+            ArrayList<File> musicFiles = thePuller.getAllMusic();
+            this.theCurrentList = this.FilesToEntriesArraylist(musicFiles);
+            this.thePlaylistNameList.add(new Entry("Default Playlist",0,true));
+            this.arraylistPlaylistList.add(theCurrentList);
+            this.theCurrentList=thePlaylistNameList;
+        } else if(selected.isPlaylist()){
+            this.theCurrentList = this.arraylistPlaylistList.get(selected.getPosition());
+        } else if(this.isEditing) {
+            this.theCurrentList = this.arraylistPlaylistList.get(0);
+            this.thePlaylistNameList.add(new Entry("NewPlaylist"+this.thePlaylistNameList.size(),this.thePlaylistNameList.size(),true));
+            this.arraylistPlaylistList.add(new ArrayList<Entry>());
+        } else {
+            this.theCurrentList = this.thePlaylistNameList;
+        }
+
+        this.theAdapter = new EntryAdapter(MainActivity.this, R.layout.entry_view, this.theCurrentList);
         setListAdapter(this.theAdapter);
     }
 
@@ -84,8 +100,8 @@ public class MainActivity extends ListActivity {
 
     }
 
-    public ArrayList<Entry> getTheList() {
-        return theList;
+    public ArrayList<Entry> getTheCurrentList() {
+        return theCurrentList;
     }
 
     @Override
@@ -114,13 +130,8 @@ public class MainActivity extends ListActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void doTheSearch(View view) {
-        FilePuller thePuller = new FilePuller();
-        this.theManager = new MusicManager(thePuller.getAllMusic(), this);
-    }
-
     public void pausePlay(View view) {
-        this.theManager.playSong();
+        this.theManager.playPause();
         this.updateSongPlayingText();
     }
 
@@ -131,15 +142,60 @@ public class MainActivity extends ListActivity {
     }
 
     public void skipToPreviousSong(View view) {
-        this.theManager.prevSong();
+        //this.theManager.prevSong();
         this.updateSongPlayingText();
     }
 
     public void skipToNextSong(View view) {
-        this.theManager.nextSong();
+        //this.theManager.nextSong();
         this.updateSongPlayingText();
     }
-    /**
-     * A placeholder fragment containing a simple view.
-     */
+
+    public void buttonClicked(View view){
+        if(!this.isEditing){
+            Button button = findViewById(R.id.button);
+            button.setText("CONFIRM");
+            this.isEditing=true;
+            this.generate(new Entry("dummy",null,false));
+        } else {
+            Button button = findViewById(R.id.button);
+            button.setText("Add Playlist");
+            this.isEditing=false;
+            Entry trickyEntry = new Entry("tricky",null,false);
+            this.generate(trickyEntry);
+        }
+    }
+
+    @Override
+    public void onBackPressed(){
+        if(this.isEditing){
+            this.thePlaylistNameList.remove(this.thePlaylistNameList.size()-1);
+            this.arraylistPlaylistList.remove(this.arraylistPlaylistList.size()-1);
+            this.isEditing=false;
+        }
+        Entry trickyEntry = new Entry("tricky",null,false);
+        this.generate(trickyEntry);
+    }
+
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        Entry entry = this.theAdapter.getItem(position);
+        if (entry.isPlaylist()) {
+            Button button = findViewById(R.id.button);
+            button.setVisibility(View.INVISIBLE);
+            Entry trickyEntry = new Entry("tricky",position,true);
+            this.generate(trickyEntry);
+
+        } else if (this.isEditing) {
+            this.arraylistPlaylistList.get(this.arraylistPlaylistList.size()-1).add(entry);
+
+            Toast.makeText(this, entry.getName()+"added", Toast.LENGTH_LONG).show();
+        } else {
+            File newFile = entry.getSongFile();
+            this.theManager.playSong(newFile);
+            TextView songName = findViewById(R.id.songName);
+            songName.setText(entry.getName());
+            //this.openFile(this, new File(entry.getPath()));
+        }
+    }
 }

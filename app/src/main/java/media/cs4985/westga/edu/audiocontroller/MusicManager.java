@@ -18,8 +18,8 @@ public class MusicManager {
     private Context theContext;
     private MediaPlayer djJazzyJeff;
     private boolean isPaused;
-    public MusicManager(ArrayList<File> songs, Context theContext){
-        this.musicFiles = songs;
+    private File currentSong;
+    public MusicManager(Context theContext){
         this.currentIndex=0;
         this.theContext = theContext;
         this.djJazzyJeff = new MediaPlayer();
@@ -49,15 +49,11 @@ public class MusicManager {
 
     }
 
-    public File getCurrentSong(){
-        return this.musicFiles.get(currentIndex);
+    public File getCurrentSong() {
+        return currentSong;
     }
 
-    public ArrayList<File> getMusicFiles() {
-        return musicFiles;
-    }
-
-    public void playSong() {
+    public void playPause(){
         if (this.djJazzyJeff.isPlaying()) {
             this.djJazzyJeff.pause();
             this.isPaused = true;
@@ -65,25 +61,40 @@ public class MusicManager {
             this.djJazzyJeff.start();
             this.isPaused = false;
         } else {
-            File songToPlay = this.musicFiles.get(currentIndex);
-
-                try {
-                    this.djJazzyJeff.setDataSource(songToPlay.getAbsolutePath());
-                    this.djJazzyJeff.prepare();
-                    this.djJazzyJeff.start();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
+            File songToPlay = this.currentSong;
+            try {
+                this.djJazzyJeff.setDataSource(songToPlay.getAbsolutePath());
+                this.djJazzyJeff.prepare();
+                this.djJazzyJeff.start();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
 
-    public void nextSong() {
+    public void playSong(File song) {
+        if(this.djJazzyJeff.isPlaying()){
+            this.djJazzyJeff.stop();
+            this.djJazzyJeff.reset();
+        }
+            File songToPlay = song;
+            try {
+                this.djJazzyJeff.setDataSource(songToPlay.getAbsolutePath());
+                this.djJazzyJeff.prepare();
+                this.djJazzyJeff.start();
+                this.currentSong = song;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+    }
+
+    public void nextSong(File song) {
         if (this.currentIndex == this.musicFiles.size()) {
             System.out.println("NO MORE SONGS");
         } else {
             this.currentIndex++;
-            File songToPlay = this.musicFiles.get(currentIndex);
+            File songToPlay = song;
 
             try {
                 this.djJazzyJeff.stop();
@@ -98,12 +109,12 @@ public class MusicManager {
 
         }
     }
-    public void prevSong() {
+    public void prevSong(File song) {
         if (this.currentIndex == 0) {
             System.out.println("NO PREV SONG");
         } else {
             this.currentIndex--;
-            File songToPlay = this.musicFiles.get(currentIndex);
+            File songToPlay = song;
 
             try {
                 this.djJazzyJeff.stop();
