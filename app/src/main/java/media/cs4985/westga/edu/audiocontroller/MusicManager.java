@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 
 public class MusicManager {
-    private ArrayList<File> musicFiles;
+    private ArrayList<Entry> thePlaylist;
     private int currentIndex;
     private Context theContext;
     private MediaPlayer djJazzyJeff;
@@ -24,22 +24,24 @@ public class MusicManager {
         this.theContext = theContext;
         this.djJazzyJeff = new MediaPlayer();
         this.isPaused = false;
-
+        this.thePlaylist = new ArrayList<>();
+        this.currentIndex = 0;
+        this.currentSong = null;
         this.djJazzyJeff.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
             @Override
             public void onCompletion(MediaPlayer mp) {
-                if(MusicManager.this.currentIndex>=MusicManager.this.musicFiles.size()){
+                if(MusicManager.this.currentIndex>=MusicManager.this.thePlaylist.size()){
                     System.out.println("NO MORE SONGS");
-
                 } else {
                 MusicManager.this.currentIndex++;
                 try {
                     mp.stop();
                     mp.reset();
-                    mp.setDataSource(MusicManager.this.musicFiles.get(MusicManager.this.currentIndex).getAbsolutePath());
+                    mp.setDataSource(MusicManager.this.thePlaylist.get(currentIndex).getSongFile().getAbsolutePath());
                     mp.prepare();
                     mp.start();
+                    MusicManager.this.currentSong = MusicManager.this.thePlaylist.get(currentIndex).getSongFile();
                 } catch (Exception e){
                     System.out.println("DATA SOURCE NOT SET");
                     System.out.println(e.getStackTrace());
@@ -72,7 +74,7 @@ public class MusicManager {
         }
     }
 
-    public void playSong(File song) {
+    public void playSong(File song,ArrayList<Entry> playlist, int songIndex) {
         if(this.djJazzyJeff.isPlaying()){
             this.djJazzyJeff.stop();
             this.djJazzyJeff.reset();
@@ -86,48 +88,9 @@ public class MusicManager {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+        this.thePlaylist = playlist;
+        this.currentIndex = songIndex;
     }
 
-    public void nextSong(File song) {
-        if (this.currentIndex == this.musicFiles.size()) {
-            System.out.println("NO MORE SONGS");
-        } else {
-            this.currentIndex++;
-            File songToPlay = song;
-
-            try {
-                this.djJazzyJeff.stop();
-                this.djJazzyJeff.reset();
-                this.djJazzyJeff.setDataSource(songToPlay.getAbsolutePath());
-                this.djJazzyJeff.prepare();
-                this.djJazzyJeff.start();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-    public void prevSong(File song) {
-        if (this.currentIndex == 0) {
-            System.out.println("NO PREV SONG");
-        } else {
-            this.currentIndex--;
-            File songToPlay = song;
-
-            try {
-                this.djJazzyJeff.stop();
-                this.djJazzyJeff.reset();
-                this.djJazzyJeff.setDataSource(songToPlay.getAbsolutePath());
-                this.djJazzyJeff.prepare();
-                this.djJazzyJeff.start();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
 
 }

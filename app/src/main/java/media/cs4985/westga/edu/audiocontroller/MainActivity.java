@@ -33,8 +33,10 @@ public class MainActivity extends ListActivity {
     private ListView theListView;
     private boolean isEditing;
     private ArrayList<Entry> theCurrentList;
+    private ArrayList<Entry> theCurrentPlaylistThatIsPlaying;
     private ArrayList<Entry> thePlaylistNameList;
     private ArrayList<ArrayList<Entry>> arraylistPlaylistList;
+    private int songIndex;
 
 
     @Override
@@ -42,8 +44,6 @@ public class MainActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        //mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         FilePuller thePuller = new FilePuller();
         permissionChecker(Manifest.permission.READ_EXTERNAL_STORAGE);
         this.theManager = new MusicManager(this);
@@ -52,6 +52,9 @@ public class MainActivity extends ListActivity {
         this.arraylistPlaylistList = new ArrayList<>();
         this.isEditing=false;
         generate(new Entry("dummy",0,false));
+        this.songIndex = 0;
+        this.theCurrentPlaylistThatIsPlaying = new ArrayList<>();
+
     }
 
     private ArrayList<Entry> FilesToEntriesArraylist(ArrayList<File> files){
@@ -76,14 +79,38 @@ public class MainActivity extends ListActivity {
             this.thePlaylistNameList.add(new Entry("Default Playlist",0,true));
             this.arraylistPlaylistList.add(theCurrentList);
             this.theCurrentList=thePlaylistNameList;
+            Button button = findViewById(R.id.button);
+            Button button1 = findViewById(R.id.button1);
+            Button button2 = findViewById(R.id.button2);
+            button.setVisibility(View.VISIBLE);
+            button1.setVisibility(View.INVISIBLE);
+            button2.setVisibility(View.INVISIBLE);
         } else if(selected.isPlaylist()){
             this.theCurrentList = this.arraylistPlaylistList.get(selected.getPosition());
+            Button button = findViewById(R.id.button);
+            Button button1 = findViewById(R.id.button1);
+            Button button2 = findViewById(R.id.button2);
+            button.setVisibility(View.INVISIBLE);
+            button1.setVisibility(View.VISIBLE);
+            button2.setVisibility(View.VISIBLE);
         } else if(this.isEditing) {
             this.theCurrentList = this.arraylistPlaylistList.get(0);
             this.thePlaylistNameList.add(new Entry("NewPlaylist"+this.thePlaylistNameList.size(),this.thePlaylistNameList.size(),true));
             this.arraylistPlaylistList.add(new ArrayList<Entry>());
+            Button button = findViewById(R.id.button);
+            Button button1 = findViewById(R.id.button1);
+            Button button2 = findViewById(R.id.button2);
+            button.setVisibility(View.VISIBLE);
+            button1.setVisibility(View.INVISIBLE);
+            button2.setVisibility(View.INVISIBLE);
         } else {
             this.theCurrentList = this.thePlaylistNameList;
+            Button button = findViewById(R.id.button);
+            Button button1 = findViewById(R.id.button1);
+            Button button2 = findViewById(R.id.button2);
+            button.setVisibility(View.VISIBLE);
+            button1.setVisibility(View.INVISIBLE);
+            button2.setVisibility(View.INVISIBLE);
         }
 
         this.theAdapter = new EntryAdapter(MainActivity.this, R.layout.entry_view, this.theCurrentList);
@@ -142,13 +169,33 @@ public class MainActivity extends ListActivity {
     }
 
     public void skipToPreviousSong(View view) {
-        //this.theManager.prevSong();
-        this.updateSongPlayingText();
+        if(this.songIndex<=0){
+
+        } else {
+            this.songIndex--;
+            File songToPlay = this.theCurrentPlaylistThatIsPlaying.get(songIndex).getSongFile();
+            this.theManager.playSong(songToPlay,theCurrentPlaylistThatIsPlaying,this.songIndex);
+            this.updateSongPlayingText();
+        }
     }
 
     public void skipToNextSong(View view) {
-        //this.theManager.nextSong();
-        this.updateSongPlayingText();
+        if(this.songIndex>=this.theCurrentPlaylistThatIsPlaying.size()-1){
+
+        } else {
+            this.songIndex++;
+            File songToPlay = this.theCurrentPlaylistThatIsPlaying.get(songIndex ).getSongFile();
+            this.theManager.playSong(songToPlay,this.theCurrentPlaylistThatIsPlaying,this.songIndex);
+            this.updateSongPlayingText();
+        }
+    }
+
+    public void addButtonClicked(View view){
+
+    }
+
+    public void removeButtonClicked(View view){
+
     }
 
     public void buttonClicked(View view){
@@ -185,17 +232,18 @@ public class MainActivity extends ListActivity {
             button.setVisibility(View.INVISIBLE);
             Entry trickyEntry = new Entry("tricky",position,true);
             this.generate(trickyEntry);
-
         } else if (this.isEditing) {
             this.arraylistPlaylistList.get(this.arraylistPlaylistList.size()-1).add(entry);
-
-            Toast.makeText(this, entry.getName()+"added", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, entry.getName()+" added", Toast.LENGTH_SHORT).show();
         } else {
             File newFile = entry.getSongFile();
-            this.theManager.playSong(newFile);
+            this.theCurrentPlaylistThatIsPlaying = this.theCurrentList;
+            this.songIndex = position;
+            this.theManager.playSong(newFile,this.theCurrentPlaylistThatIsPlaying,this.songIndex);
+
+
             TextView songName = findViewById(R.id.songName);
             songName.setText(entry.getName());
-            //this.openFile(this, new File(entry.getPath()));
         }
     }
 }
