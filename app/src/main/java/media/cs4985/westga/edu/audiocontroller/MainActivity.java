@@ -32,6 +32,8 @@ public class MainActivity extends ListActivity {
     private EntryAdapter theAdapter;
     private ListView theListView;
     private boolean isEditing;
+    private boolean isAdding;
+    private boolean isDeleting;
     private ArrayList<Entry> theCurrentList;
     private ArrayList<Entry> theCurrentPlaylistThatIsPlaying;
     private ArrayList<Entry> thePlaylistNameList;
@@ -51,6 +53,8 @@ public class MainActivity extends ListActivity {
         this.thePlaylistNameList = new ArrayList<>();
         this.arraylistPlaylistList = new ArrayList<>();
         this.isEditing=false;
+        this.isAdding=false;
+        this.isDeleting=false;
         generate(new Entry("dummy",0,false));
         this.songIndex = 0;
         this.theCurrentPlaylistThatIsPlaying = new ArrayList<>();
@@ -87,6 +91,7 @@ public class MainActivity extends ListActivity {
             button2.setVisibility(View.INVISIBLE);
         } else if(selected.isPlaylist()){
             this.theCurrentList = this.arraylistPlaylistList.get(selected.getPosition());
+            this.theCurrentPlaylistThatIsPlaying = this.theCurrentList;
             Button button = findViewById(R.id.button);
             Button button1 = findViewById(R.id.button1);
             Button button2 = findViewById(R.id.button2);
@@ -191,11 +196,33 @@ public class MainActivity extends ListActivity {
     }
 
     public void addButtonClicked(View view){
-
+        if(!this.isAdding){
+            this.isAdding = true;
+            this.theCurrentList = this.arraylistPlaylistList.get(0);
+            Button button = findViewById(R.id.button);
+            Button button1 = findViewById(R.id.button1);
+            Button button2 = findViewById(R.id.button2);
+            button.setVisibility(View.INVISIBLE);
+            button1.setVisibility(View.INVISIBLE);
+            button2.setVisibility(View.INVISIBLE);
+        }
+        this.theAdapter = new EntryAdapter(MainActivity.this, R.layout.entry_view, this.theCurrentList);
+        setListAdapter(this.theAdapter);
     }
 
     public void removeButtonClicked(View view){
-
+        if(!this.isDeleting){
+            this.isDeleting = true;
+            this.theCurrentList = this.theCurrentPlaylistThatIsPlaying;
+            Button button = findViewById(R.id.button);
+            Button button1 = findViewById(R.id.button1);
+            Button button2 = findViewById(R.id.button2);
+            button.setVisibility(View.INVISIBLE);
+            button1.setVisibility(View.INVISIBLE);
+            button2.setVisibility(View.INVISIBLE);
+        }
+        this.theAdapter = new EntryAdapter(MainActivity.this, R.layout.entry_view, this.theCurrentList);
+        setListAdapter(this.theAdapter);
     }
 
     public void buttonClicked(View view){
@@ -235,6 +262,30 @@ public class MainActivity extends ListActivity {
         } else if (this.isEditing) {
             this.arraylistPlaylistList.get(this.arraylistPlaylistList.size()-1).add(entry);
             Toast.makeText(this, entry.getName()+" added", Toast.LENGTH_SHORT).show();
+        } else if(this.isAdding) {
+            this.theCurrentPlaylistThatIsPlaying.add(entry);
+            this.isAdding = false;
+            this.theCurrentList = this.theCurrentPlaylistThatIsPlaying;
+            Button button = findViewById(R.id.button);
+            Button button1 = findViewById(R.id.button1);
+            Button button2 = findViewById(R.id.button2);
+            button.setVisibility(View.INVISIBLE);
+            button1.setVisibility(View.VISIBLE);
+            button2.setVisibility(View.VISIBLE);
+            this.theAdapter = new EntryAdapter(MainActivity.this, R.layout.entry_view, this.theCurrentList);
+            setListAdapter(this.theAdapter);
+        } else if(this.isDeleting) {
+            this.theCurrentPlaylistThatIsPlaying.remove(entry);
+            this.isDeleting = false;
+            this.theCurrentList = theCurrentPlaylistThatIsPlaying;
+            Button button = findViewById(R.id.button);
+            Button button1 = findViewById(R.id.button1);
+            Button button2 = findViewById(R.id.button2);
+            button.setVisibility(View.INVISIBLE);
+            button1.setVisibility(View.VISIBLE);
+            button2.setVisibility(View.VISIBLE);
+            this.theAdapter = new EntryAdapter(MainActivity.this, R.layout.entry_view, this.theCurrentList);
+            setListAdapter(this.theAdapter);
         } else {
             File newFile = entry.getSongFile();
             this.theCurrentPlaylistThatIsPlaying = this.theCurrentList;
