@@ -162,7 +162,7 @@ public class MainActivity extends ListActivity {
     public void pausePlay(View view) {
         this.theManager.playPause();
         this.updateSongPlayingText();
-        //this.updateSongTimeText();
+        this.updateSongTimeText();
     }
 
     private void updateSongPlayingText() {
@@ -175,7 +175,8 @@ public class MainActivity extends ListActivity {
     private void updateSongTimeText() {
         TextView songTime = findViewById(R.id.songTime);
         int timeText = this.theManager.getSongTime();
-        songTime.setText(timeText);
+        String text = Integer.toString(timeText);
+        songTime.setText(text);
     }
 
     public void skipToPreviousSong(View view) {
@@ -186,7 +187,7 @@ public class MainActivity extends ListActivity {
             File songToPlay = this.theCurrentPlaylistThatIsPlaying.get(songIndex).getSongFile();
             this.theManager.playSong(songToPlay, theCurrentPlaylistThatIsPlaying, this.songIndex);
             this.updateSongPlayingText();
-            //this.updateSongTimeText();
+            this.updateSongTimeText();
         }
     }
 
@@ -198,7 +199,7 @@ public class MainActivity extends ListActivity {
             File songToPlay = this.theCurrentPlaylistThatIsPlaying.get(songIndex).getSongFile();
             this.theManager.playSong(songToPlay, this.theCurrentPlaylistThatIsPlaying, this.songIndex);
             this.updateSongPlayingText();
-            //this.updateSongTimeText();
+            this.updateSongTimeText();
         }
     }
 
@@ -302,8 +303,7 @@ public class MainActivity extends ListActivity {
             TextView songName = findViewById(R.id.songName);
             songName.setText(entry.getName());
 
-            TextView songTime = findViewById(R.id.songTime);
-            songTime.setText(theManager.getSongTime());
+            this.updateSongTimeText();
         }
     }
 }

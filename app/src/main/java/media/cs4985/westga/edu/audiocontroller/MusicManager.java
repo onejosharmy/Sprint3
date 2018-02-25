@@ -29,6 +29,7 @@ public class MusicManager {
         this.thePlaylist = new ArrayList<>();
         this.currentIndex = 0;
         this.currentSong = null;
+        this.songTime = 0;
         this.djJazzyJeff.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
             @Override
