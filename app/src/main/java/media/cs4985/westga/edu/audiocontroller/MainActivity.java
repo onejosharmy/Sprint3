@@ -23,9 +23,6 @@ import java.util.ArrayList;
 public class MainActivity extends ListActivity {
 
     /**
-
-
-    /**
      * The {@link ViewPager} that will host the section contents.
      */
     private MusicManager theManager;
@@ -49,7 +46,7 @@ public class MainActivity extends ListActivity {
         FilePuller thePuller = new FilePuller();
         permissionChecker(Manifest.permission.READ_EXTERNAL_STORAGE);
         this.theManager = new MusicManager(this);
-        this.theListView = (ListView) findViewById(R.id.list);
+        this.theListView = (ListView) findViewById(android.R.id.list);
         this.thePlaylistNameList = new ArrayList<>();
         this.arraylistPlaylistList = new ArrayList<>();
         this.isEditing=false;

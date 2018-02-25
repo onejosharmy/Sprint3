@@ -19,6 +19,7 @@ public class MusicManager {
     private MediaPlayer djJazzyJeff;
     private boolean isPaused;
     private File currentSong;
+
     public MusicManager(Context theContext){
         this.currentIndex=0;
         this.theContext = theContext;
@@ -53,6 +54,10 @@ public class MusicManager {
 
     public File getCurrentSong() {
         return currentSong;
+    }
+
+    public int getSongTime(){
+        return this.djJazzyJeff.getDuration()/1000;
     }
 
     public void playPause(){
