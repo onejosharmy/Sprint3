@@ -49,20 +49,20 @@ public class MainActivity extends ListActivity {
         this.theListView = (ListView) findViewById(android.R.id.list);
         this.thePlaylistNameList = new ArrayList<>();
         this.arraylistPlaylistList = new ArrayList<>();
-        this.isEditing=false;
-        this.isAdding=false;
-        this.isDeleting=false;
-        generate(new Entry("dummy",0,false));
+        this.isEditing = false;
+        this.isAdding = false;
+        this.isDeleting = false;
+        generate(new Entry("dummy", 0, false));
         this.songIndex = 0;
         this.theCurrentPlaylistThatIsPlaying = new ArrayList<>();
 
     }
 
-    private ArrayList<Entry> FilesToEntriesArraylist(ArrayList<File> files){
+    private ArrayList<Entry> FilesToEntriesArraylist(ArrayList<File> files) {
         ArrayList<Entry> theEntriesPlease = new ArrayList<>();
-        for(File current:files){
+        for (File current : files) {
             int trimIndex = current.getPath().lastIndexOf("/") + 1;
-            Entry theEntry = new Entry(current.getPath().substring(trimIndex),current,false);
+            Entry theEntry = new Entry(current.getPath().substring(trimIndex), current, false);
             theEntriesPlease.add(theEntry);
             System.out.println(theEntry);
         }
@@ -70,23 +70,23 @@ public class MainActivity extends ListActivity {
     }
 
 
-    private void generate(Entry selected){
+    private void generate(Entry selected) {
 
         this.theCurrentList = new ArrayList<Entry>();
-        if(this.thePlaylistNameList.size()==0){
+        if (this.thePlaylistNameList.size() == 0) {
             FilePuller thePuller = new FilePuller();
             ArrayList<File> musicFiles = thePuller.getAllMusic();
             this.theCurrentList = this.FilesToEntriesArraylist(musicFiles);
-            this.thePlaylistNameList.add(new Entry("Default Playlist",0,true));
+            this.thePlaylistNameList.add(new Entry("Default Playlist", 0, true));
             this.arraylistPlaylistList.add(theCurrentList);
-            this.theCurrentList=thePlaylistNameList;
+            this.theCurrentList = thePlaylistNameList;
             Button button = findViewById(R.id.button);
             Button button1 = findViewById(R.id.button1);
             Button button2 = findViewById(R.id.button2);
             button.setVisibility(View.VISIBLE);
             button1.setVisibility(View.INVISIBLE);
             button2.setVisibility(View.INVISIBLE);
-        } else if(selected.isPlaylist()){
+        } else if (selected.isPlaylist()) {
             this.theCurrentList = this.arraylistPlaylistList.get(selected.getPosition());
             this.theCurrentPlaylistThatIsPlaying = this.theCurrentList;
             Button button = findViewById(R.id.button);
@@ -95,9 +95,9 @@ public class MainActivity extends ListActivity {
             button.setVisibility(View.INVISIBLE);
             button1.setVisibility(View.VISIBLE);
             button2.setVisibility(View.VISIBLE);
-        } else if(this.isEditing) {
+        } else if (this.isEditing) {
             this.theCurrentList = this.arraylistPlaylistList.get(0);
-            this.thePlaylistNameList.add(new Entry("NewPlaylist"+this.thePlaylistNameList.size(),this.thePlaylistNameList.size(),true));
+            this.thePlaylistNameList.add(new Entry("NewPlaylist" + this.thePlaylistNameList.size(), this.thePlaylistNameList.size(), true));
             this.arraylistPlaylistList.add(new ArrayList<Entry>());
             Button button = findViewById(R.id.button);
             Button button1 = findViewById(R.id.button1);
@@ -162,38 +162,48 @@ public class MainActivity extends ListActivity {
     public void pausePlay(View view) {
         this.theManager.playPause();
         this.updateSongPlayingText();
+        //this.updateSongTimeText();
     }
 
     private void updateSongPlayingText() {
         TextView songName = findViewById(R.id.songName);
         String trimmedName = this.theManager.getCurrentSong().getPath().substring(this.theManager.getCurrentSong().getPath().lastIndexOf("/") + 1);
         songName.setText(trimmedName);
+
+    }
+
+    private void updateSongTimeText() {
+        TextView songTime = findViewById(R.id.songTime);
+        int timeText = this.theManager.getSongTime();
+        songTime.setText(timeText);
     }
 
     public void skipToPreviousSong(View view) {
-        if(this.songIndex<=0){
+        if (this.songIndex <= 0) {
 
         } else {
             this.songIndex--;
             File songToPlay = this.theCurrentPlaylistThatIsPlaying.get(songIndex).getSongFile();
-            this.theManager.playSong(songToPlay,theCurrentPlaylistThatIsPlaying,this.songIndex);
+            this.theManager.playSong(songToPlay, theCurrentPlaylistThatIsPlaying, this.songIndex);
             this.updateSongPlayingText();
+            //this.updateSongTimeText();
         }
     }
 
     public void skipToNextSong(View view) {
-        if(this.songIndex>=this.theCurrentPlaylistThatIsPlaying.size()-1){
+        if (this.songIndex >= this.theCurrentPlaylistThatIsPlaying.size() - 1) {
 
         } else {
             this.songIndex++;
-            File songToPlay = this.theCurrentPlaylistThatIsPlaying.get(songIndex ).getSongFile();
-            this.theManager.playSong(songToPlay,this.theCurrentPlaylistThatIsPlaying,this.songIndex);
+            File songToPlay = this.theCurrentPlaylistThatIsPlaying.get(songIndex).getSongFile();
+            this.theManager.playSong(songToPlay, this.theCurrentPlaylistThatIsPlaying, this.songIndex);
             this.updateSongPlayingText();
+            //this.updateSongTimeText();
         }
     }
 
-    public void addButtonClicked(View view){
-        if(!this.isAdding){
+    public void addButtonClicked(View view) {
+        if (!this.isAdding) {
             this.isAdding = true;
             this.theCurrentList = this.arraylistPlaylistList.get(0);
             Button button = findViewById(R.id.button);
@@ -207,8 +217,8 @@ public class MainActivity extends ListActivity {
         setListAdapter(this.theAdapter);
     }
 
-    public void removeButtonClicked(View view){
-        if(!this.isDeleting){
+    public void removeButtonClicked(View view) {
+        if (!this.isDeleting) {
             this.isDeleting = true;
             this.theCurrentList = this.theCurrentPlaylistThatIsPlaying;
             Button button = findViewById(R.id.button);
@@ -222,29 +232,29 @@ public class MainActivity extends ListActivity {
         setListAdapter(this.theAdapter);
     }
 
-    public void buttonClicked(View view){
-        if(!this.isEditing){
+    public void buttonClicked(View view) {
+        if (!this.isEditing) {
             Button button = findViewById(R.id.button);
             button.setText("CONFIRM");
-            this.isEditing=true;
-            this.generate(new Entry("dummy",null,false));
+            this.isEditing = true;
+            this.generate(new Entry("dummy", null, false));
         } else {
             Button button = findViewById(R.id.button);
             button.setText("Add Playlist");
-            this.isEditing=false;
-            Entry trickyEntry = new Entry("tricky",null,false);
+            this.isEditing = false;
+            Entry trickyEntry = new Entry("tricky", null, false);
             this.generate(trickyEntry);
         }
     }
 
     @Override
-    public void onBackPressed(){
-        if(this.isEditing){
-            this.thePlaylistNameList.remove(this.thePlaylistNameList.size()-1);
-            this.arraylistPlaylistList.remove(this.arraylistPlaylistList.size()-1);
-            this.isEditing=false;
+    public void onBackPressed() {
+        if (this.isEditing) {
+            this.thePlaylistNameList.remove(this.thePlaylistNameList.size() - 1);
+            this.arraylistPlaylistList.remove(this.arraylistPlaylistList.size() - 1);
+            this.isEditing = false;
         }
-        Entry trickyEntry = new Entry("tricky",null,false);
+        Entry trickyEntry = new Entry("tricky", null, false);
         this.generate(trickyEntry);
     }
 
@@ -254,12 +264,12 @@ public class MainActivity extends ListActivity {
         if (entry.isPlaylist()) {
             Button button = findViewById(R.id.button);
             button.setVisibility(View.INVISIBLE);
-            Entry trickyEntry = new Entry("tricky",position,true);
+            Entry trickyEntry = new Entry("tricky", position, true);
             this.generate(trickyEntry);
         } else if (this.isEditing) {
-            this.arraylistPlaylistList.get(this.arraylistPlaylistList.size()-1).add(entry);
-            Toast.makeText(this, entry.getName()+" added", Toast.LENGTH_SHORT).show();
-        } else if(this.isAdding) {
+            this.arraylistPlaylistList.get(this.arraylistPlaylistList.size() - 1).add(entry);
+            Toast.makeText(this, entry.getName() + " added", Toast.LENGTH_SHORT).show();
+        } else if (this.isAdding) {
             this.theCurrentPlaylistThatIsPlaying.add(entry);
             this.isAdding = false;
             this.theCurrentList = this.theCurrentPlaylistThatIsPlaying;
@@ -271,7 +281,7 @@ public class MainActivity extends ListActivity {
             button2.setVisibility(View.VISIBLE);
             this.theAdapter = new EntryAdapter(MainActivity.this, R.layout.entry_view, this.theCurrentList);
             setListAdapter(this.theAdapter);
-        } else if(this.isDeleting) {
+        } else if (this.isDeleting) {
             this.theCurrentPlaylistThatIsPlaying.remove(entry);
             this.isDeleting = false;
             this.theCurrentList = theCurrentPlaylistThatIsPlaying;
@@ -287,11 +297,13 @@ public class MainActivity extends ListActivity {
             File newFile = entry.getSongFile();
             this.theCurrentPlaylistThatIsPlaying = this.theCurrentList;
             this.songIndex = position;
-            this.theManager.playSong(newFile,this.theCurrentPlaylistThatIsPlaying,this.songIndex);
-
+            this.theManager.playSong(newFile, this.theCurrentPlaylistThatIsPlaying, this.songIndex);
 
             TextView songName = findViewById(R.id.songName);
             songName.setText(entry.getName());
+
+            TextView songTime = findViewById(R.id.songTime);
+            songTime.setText(theManager.getSongTime());
         }
     }
 }
