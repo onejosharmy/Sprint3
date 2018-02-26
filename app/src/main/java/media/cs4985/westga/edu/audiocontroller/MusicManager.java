@@ -75,8 +75,9 @@ public class MusicManager {
             try {
                 this.djJazzyJeff.setDataSource(songToPlay.getAbsolutePath());
                 this.djJazzyJeff.prepare();
+                this.songTime = djJazzyJeff.getCurrentPosition();
                 this.djJazzyJeff.start();
-                this.songTime = djJazzyJeff.getDuration();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -92,9 +93,10 @@ public class MusicManager {
         try {
             this.djJazzyJeff.setDataSource(songToPlay.getAbsolutePath());
             this.djJazzyJeff.prepare();
+            this.songTime = this.djJazzyJeff.getCurrentPosition();
             this.djJazzyJeff.start();
             this.currentSong = song;
-            this.songTime = this.djJazzyJeff.getDuration();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

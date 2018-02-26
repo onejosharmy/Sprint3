@@ -2,6 +2,7 @@ package media.cs4985.westga.edu.audiocontroller;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.app.ListActivity;
@@ -36,6 +37,7 @@ public class MainActivity extends ListActivity {
     private ArrayList<Entry> thePlaylistNameList;
     private ArrayList<ArrayList<Entry>> arraylistPlaylistList;
     private int songIndex;
+    private Handler handler;
 
 
     @Override
@@ -55,7 +57,7 @@ public class MainActivity extends ListActivity {
         generate(new Entry("dummy", 0, false));
         this.songIndex = 0;
         this.theCurrentPlaylistThatIsPlaying = new ArrayList<>();
-
+        this.handler = new Handler();
     }
 
     private ArrayList<Entry> FilesToEntriesArraylist(ArrayList<File> files) {
@@ -162,7 +164,7 @@ public class MainActivity extends ListActivity {
     public void pausePlay(View view) {
         this.theManager.playPause();
         this.updateSongPlayingText();
-        this.updateSongTimeText();
+        this.handler.post(updateTimeText);
     }
 
     private void updateSongPlayingText() {
@@ -179,6 +181,12 @@ public class MainActivity extends ListActivity {
         songTime.setText(text);
     }
 
+    Runnable updateTimeText = new Runnable() {
+        public void run() {
+            updateSongTimeText();
+        }
+    };
+
     public void skipToPreviousSong(View view) {
         if (this.songIndex <= 0) {
 
@@ -187,7 +195,7 @@ public class MainActivity extends ListActivity {
             File songToPlay = this.theCurrentPlaylistThatIsPlaying.get(songIndex).getSongFile();
             this.theManager.playSong(songToPlay, theCurrentPlaylistThatIsPlaying, this.songIndex);
             this.updateSongPlayingText();
-            this.updateSongTimeText();
+            this.handler.post(updateTimeText);
         }
     }
 
@@ -199,7 +207,7 @@ public class MainActivity extends ListActivity {
             File songToPlay = this.theCurrentPlaylistThatIsPlaying.get(songIndex).getSongFile();
             this.theManager.playSong(songToPlay, this.theCurrentPlaylistThatIsPlaying, this.songIndex);
             this.updateSongPlayingText();
-            this.updateSongTimeText();
+            this.handler.post(updateTimeText);
         }
     }
 
